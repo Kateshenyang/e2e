@@ -1,0 +1,26 @@
+.container {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  .card-logos img {
+    width: 50px;
+    margin: 0 10px;
+  }
+  
+  .card-validator {
+    margin-top: 20px;
+  }
+  
+  #card-number {
+    padding: 10px;
+    width: 200px;
+  }
+  
+  #validate-btn {
+    padding: 10px 20px;
+    background-color: green;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
