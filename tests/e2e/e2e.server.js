@@ -1,14 +1,15 @@
-const webpack = require('webpack');
-const WebpackDevServer = require('webpack-dev-server');
-const config = require('../../webpack.dev.js');
+const express = require('express');
+const app = express();
+const port = 9000;
 
-const server = new WebpackDevServer(webpack(config), {});
-server.listen(9000, 'localhost', (err) => {
+app.use(express.static('public'));
+
+app.listen(port, (err) => {
   if (err) {
-    console.error(err);
-    return;
-  }
-  if (process.send) {
+    console.error('Server error:', err);
+    process.send('error');
+  } else {
+    console.log(`Server running at http://localhost:${port}/`);
     process.send('ok');
   }
 });
