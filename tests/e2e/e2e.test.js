@@ -28,14 +28,14 @@ describe('Credit Card Validator form', () => {
       });
       setTimeout(() => {
         reject(new Error('Server start timeout'));
-      }, 120000);
+      }, 90000);
     });
 
     console.log('Starting browser...');
     browser = await puppeteer.launch({
-      // headless: false,
-      // slowMo: 250,
-      // devtools: true,
+      headless: true,
+      slowMo: 100,
+      devtools: false,
     });
     page = await browser.newPage();
   });
@@ -51,43 +51,53 @@ describe('Credit Card Validator form', () => {
     }
   });
 
-  test('should validate a valid card number', async () => {
-    console.log('Navigating to the page...');
-    await page.goto(baseUrl);
-    await page.waitForSelector('#card-number');
-    await page.type('#card-number', '4111111111111111'); // Visa test card number
-    await page.waitForSelector('#validate-btn');
-    await page.click('#validate-btn');
-    const alertText = await page.evaluate(() => {
-      return new Promise((resolve) => {
-        const originalAlert = window.alert;
-        window.alert = (text) => {
-          originalAlert(text);
-          resolve(text);
-        };
+  async function handleAlert() {
+    return new Promise((resolve) => {
+      page.on('dialog', async (dialog) => {
+        const message = dialog.message();
+        await dialog.dismiss();
+        resolve(message);
       });
     });
+  }
+
+  test('should validate a valid card number', async () => {
+    console.log('Navigating to the page...');
+    await page.goto(baseUrl, { waitUntil: 'networkidle2' });
+
+    console.log('Typing the card number...');
+    await page.waitForSelector('#card-number');
+    await page.type('#card-number', '4111111111111111'); // Visa test card number
+
+    console.log('Clicking the validate button...');
+    await page.waitForSelector('#validate-btn');
+    const alertPromise = handleAlert();
+    await page.click('#validate-btn');
+
+    console.log('Waiting for alert...');
+    const alertText = await alertPromise;
     console.log('Alert text:', alertText);
+
     expect(alertText).toBe('Card is valid and it is a Visa');
   });
 
   test('should invalidate an invalid card number', async () => {
     console.log('Navigating to the page...');
-    await page.goto(baseUrl);
+    await page.goto(baseUrl, { waitUntil: 'networkidle2' });
+
+    console.log('Typing the card number...');
     await page.waitForSelector('#card-number');
     await page.type('#card-number', '1234567812345678'); // Invalid card number
+
+    console.log('Clicking the validate button...');
     await page.waitForSelector('#validate-btn');
+    const alertPromise = handleAlert();
     await page.click('#validate-btn');
-    const alertText = await page.evaluate(() => {
-      return new Promise((resolve) => {
-        const originalAlert = window.alert;
-        window.alert = (text) => {
-          originalAlert(text);
-          resolve(text);
-        };
-      });
-    });
+
+    console.log('Waiting for alert...');
+    const alertText = await alertPromise;
     console.log('Alert text:', alertText);
+
     expect(alertText).toBe('Card is invalid');
   });
 });
