@@ -8,6 +8,7 @@ describe('Credit Card Validator form', () => {
   let page = null;
   let server = null;
   const baseUrl = 'http://localhost:9000';
+  let serverStartTimeout = null;
 
   beforeEach(async () => {
     console.log('Starting server...');
@@ -21,12 +22,13 @@ describe('Credit Card Validator form', () => {
         console.log('Server message:', message);
         if (message === 'ok') {
           console.log('Server started successfully');
+          clearTimeout(serverStartTimeout);
           resolve();
         } else {
           reject(new Error('Server failed to start'));
         }
       });
-      setTimeout(() => {
+      serverStartTimeout = setTimeout(() => {
         reject(new Error('Server start timeout'));
       }, 90000);
     });
