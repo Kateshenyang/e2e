@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer';
 import { fork } from 'child_process';
 
-jest.setTimeout(120000); // Увеличен общий таймаут для тестов
+jest.setTimeout(120000);
 
 describe('Credit Card Validator form', () => {
   let browser = null;
@@ -28,14 +28,14 @@ describe('Credit Card Validator form', () => {
       });
       setTimeout(() => {
         reject(new Error('Server start timeout'));
-      }, 90000); // Увеличенный таймаут до 90 секунд
+      }, 120000);
     });
 
     console.log('Starting browser...');
     browser = await puppeteer.launch({
-      // headless: false, // показать GUI
+      // headless: false,
       // slowMo: 250,
-      // devtools: true, // показать devTools
+      // devtools: true,
     });
     page = await browser.newPage();
   });
@@ -54,8 +54,9 @@ describe('Credit Card Validator form', () => {
   test('should validate a valid card number', async () => {
     console.log('Navigating to the page...');
     await page.goto(baseUrl);
-    await page.waitForSelector('#card-number'); // Ждем, пока элемент появится на странице
+    await page.waitForSelector('#card-number');
     await page.type('#card-number', '4111111111111111'); // Visa test card number
+    await page.waitForSelector('#validate-btn');
     await page.click('#validate-btn');
     const alertText = await page.evaluate(() => {
       return new Promise((resolve) => {
@@ -73,8 +74,9 @@ describe('Credit Card Validator form', () => {
   test('should invalidate an invalid card number', async () => {
     console.log('Navigating to the page...');
     await page.goto(baseUrl);
-    await page.waitForSelector('#card-number'); // Ждем, пока элемент появится на странице
+    await page.waitForSelector('#card-number');
     await page.type('#card-number', '1234567812345678'); // Invalid card number
+    await page.waitForSelector('#validate-btn');
     await page.click('#validate-btn');
     const alertText = await page.evaluate(() => {
       return new Promise((resolve) => {
