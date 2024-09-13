@@ -1,15 +1,16 @@
-const express = require('express');
-const app = express();
-const port = 9000;
+const Webpack = require('webpack');
+const WebpackDevServer = require('webpack-dev-server');
+const config = require('../../webpack.dev');
+const PORT = 9000;
 
-app.use(express.static('public'));
+const compiler = Webpack(config);
+const devServerOptions = { ...config.devServer, open: false, port: PORT };
+const server = new WebpackDevServer(devServerOptions, compiler);
 
-app.listen(port, (err) => {
-  if (err) {
-    console.error('Server error:', err);
-    process.send('error');
-  } else {
-    console.log(`Server running at http://localhost:${port}/`);
-    process.send('ok');
-  }
-});
+const runServer = async () => {
+  console.log('Starting server on port ' + PORT);
+  await server.start();
+  process.send('ok');
+};
+
+runServer();

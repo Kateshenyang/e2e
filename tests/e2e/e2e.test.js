@@ -1,7 +1,7 @@
 import puppeteer from 'puppeteer';
 import { fork } from 'child_process';
 
-jest.setTimeout(90000);
+jest.setTimeout(120000); // Увеличен общий таймаут для тестов
 
 describe('Credit Card Validator form', () => {
   let browser = null;
@@ -28,7 +28,7 @@ describe('Credit Card Validator form', () => {
       });
       setTimeout(() => {
         reject(new Error('Server start timeout'));
-      }, 30000);
+      }, 90000); // Увеличенный таймаут до 90 секунд
     });
 
     console.log('Starting browser...');
@@ -54,9 +54,18 @@ describe('Credit Card Validator form', () => {
   test('should validate a valid card number', async () => {
     console.log('Navigating to the page...');
     await page.goto(baseUrl);
+    await page.waitForSelector('#card-number'); // Ждем, пока элемент появится на странице
     await page.type('#card-number', '4111111111111111'); // Visa test card number
     await page.click('#validate-btn');
-    const alertText = await page.evaluate(() => alert.text());
+    const alertText = await page.evaluate(() => {
+      return new Promise((resolve) => {
+        const originalAlert = window.alert;
+        window.alert = (text) => {
+          originalAlert(text);
+          resolve(text);
+        };
+      });
+    });
     console.log('Alert text:', alertText);
     expect(alertText).toBe('Card is valid and it is a Visa');
   });
@@ -64,9 +73,18 @@ describe('Credit Card Validator form', () => {
   test('should invalidate an invalid card number', async () => {
     console.log('Navigating to the page...');
     await page.goto(baseUrl);
+    await page.waitForSelector('#card-number'); // Ждем, пока элемент появится на странице
     await page.type('#card-number', '1234567812345678'); // Invalid card number
     await page.click('#validate-btn');
-    const alertText = await page.evaluate(() => alert.text());
+    const alertText = await page.evaluate(() => {
+      return new Promise((resolve) => {
+        const originalAlert = window.alert;
+        window.alert = (text) => {
+          originalAlert(text);
+          resolve(text);
+        };
+      });
+    });
     console.log('Alert text:', alertText);
     expect(alertText).toBe('Card is invalid');
   });
