@@ -10,7 +10,7 @@ describe('Credit Card Validator form', () => {
   const baseUrl = 'http://localhost:9000';
   let serverStartTimeout = null;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     console.log('Starting server...');
     server = fork(`${__dirname}/e2e.server.js`);
     await new Promise((resolve, reject) => {
@@ -36,12 +36,12 @@ describe('Credit Card Validator form', () => {
     console.log('Starting browser...');
     browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: ['--no-sandbox', '--disable-setuid-sandbox'], // Эти аргументы могут помочь избежать проблем с правами доступа
     });
     page = await browser.newPage();
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     if (browser) {
       console.log('Closing browser...');
       await browser.close();

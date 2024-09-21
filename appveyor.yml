@@ -11,8 +11,8 @@ cache: node_modules
 install:
   - npm install
   - npm install wait-on
-  - npm install puppeteer@latest # Установка последней версии Puppeteer
-  - npx puppeteer install # Загрузка встроенного браузера для Puppeteer
+  - npm install puppeteer@latest
+  - npx puppeteer install
 
 build: off
 
@@ -24,6 +24,7 @@ test_script:
   - npx wait-on http://localhost:9000 # Ожидание запуска сервера
   - npm run lint
   - npm run test -- --passWithNoTests
+  - pkill -f "webpack serve" # Завершение процесса сервера после тестов
 
 deploy_script:
   - git config --global credential.helper store
