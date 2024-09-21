@@ -11,4 +11,4 @@ document.getElementById('validate-btn').addEventListener('click', () => {
   } else {
     alert('Card is invalid');
   }
-}); 
+});
