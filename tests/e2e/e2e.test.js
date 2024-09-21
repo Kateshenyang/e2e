@@ -36,8 +36,7 @@ describe('Credit Card Validator form', () => {
     console.log('Starting browser...');
     browser = await puppeteer.launch({
       headless: true,
-      slowMo: 100,
-      devtools: false,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     page = await browser.newPage();
   });

@@ -10,6 +10,9 @@ cache: node_modules
 
 install:
   - npm install
+  - npm install wait-on
+  - npm install puppeteer@latest # Установка последней версии Puppeteer
+  - npx puppeteer install # Загрузка встроенного браузера для Puppeteer
 
 build: off
 
@@ -17,11 +20,14 @@ build_script:
   - npm run build
 
 test_script:
-  - npm run lint && npm run test -- --passWithNoTests
+  - npm start & # Запуск сервера в фоновом режиме
+  - npx wait-on http://localhost:9000 # Ожидание запуска сервера
+  - npm run lint
+  - npm run test -- --passWithNoTests
 
 deploy_script:
   - git config --global credential.helper store
-  - git config --global user.name AppVeyor
-  - git config --global user.email ci@appveyor.com
+  - git config --global user.name "AppVeyor"
+  - git config --global user.email "ci@appveyor.com"
   - echo "https://$GITHUB_TOKEN:x-oauth-basic@github.com" > "$HOME/.git-credentials"
-  - npx gh-pages -d dist -u "appveyor-bot <ci@appveyor>"
+  - npx gh-pages -d dist -u "appveyor-bot <ci@appveyor>" -r "https://$GITHUB_TOKEN@github.com/Kateshenyang/popover.git"
