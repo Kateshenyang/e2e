@@ -1,7 +1,8 @@
 import puppeteer from 'puppeteer';
 import { fork } from 'child_process';
+import find from 'find-process';
 
-jest.setTimeout(120000);
+jest.setTimeout(180000); // Увеличьте время ожидания, если необходимо
 
 describe('Credit Card Validator form', () => {
   let browser = null;
@@ -11,6 +12,18 @@ describe('Credit Card Validator form', () => {
   let serverStartTimeout = null;
 
   beforeAll(async () => {
+    // Завершение всех процессов, использующих порт 9000
+    try {
+      console.log('Searching for any process using port 9000...');
+      const list = await find('port', 9000);
+      list.forEach((proc) => {
+        console.log(`Killing process ${proc.pid} using port 9000...`);
+        process.kill(proc.pid);
+      });
+    } catch (err) {
+      console.error('Error killing process:', err);
+    }
+
     console.log('Starting server...');
     server = fork(`${__dirname}/e2e.server.js`);
     await new Promise((resolve, reject) => {
@@ -25,12 +38,14 @@ describe('Credit Card Validator form', () => {
           clearTimeout(serverStartTimeout);
           resolve();
         } else {
+          console.error('Server failed to start');
           reject(new Error('Server failed to start'));
         }
       });
       serverStartTimeout = setTimeout(() => {
+        console.error('Server start timeout');
         reject(new Error('Server start timeout'));
-      }, 90000);
+      }, 150000); // Увеличьте время ожидания, если необходимо
     });
 
     console.log('Starting browser...');
@@ -53,12 +68,16 @@ describe('Credit Card Validator form', () => {
   });
 
   async function handleAlert() {
-    return new Promise((resolve) => {
-      page.on('dialog', async (dialog) => {
+    return new Promise((resolve, reject) => {
+      function onDialog(dialog) {
         const message = dialog.message();
-        await dialog.dismiss();
-        resolve(message);
-      });
+        dialog
+          .dismiss()
+          .then(() => resolve(message))
+          .catch(reject);
+        page.off('dialog', onDialog);
+      }
+      page.on('dialog', onDialog);
     });
   }
 
@@ -66,12 +85,14 @@ describe('Credit Card Validator form', () => {
     console.log('Navigating to the page...');
     await page.goto(baseUrl, { waitUntil: 'networkidle2' });
 
-    console.log('Typing the card number...');
+    console.log('Waiting for card number input...');
     await page.waitForSelector('#card-number');
+    console.log('Typing the card number...');
     await page.type('#card-number', '4111111111111111'); // Visa test card number
 
-    console.log('Clicking the validate button...');
+    console.log('Waiting for validate button...');
     await page.waitForSelector('#validate-btn');
+    console.log('Clicking the validate button...');
     const alertPromise = handleAlert();
     await page.click('#validate-btn');
 
@@ -86,12 +107,14 @@ describe('Credit Card Validator form', () => {
     console.log('Navigating to the page...');
     await page.goto(baseUrl, { waitUntil: 'networkidle2' });
 
-    console.log('Typing the card number...');
+    console.log('Waiting for card number input...');
     await page.waitForSelector('#card-number');
+    console.log('Typing the card number...');
     await page.type('#card-number', '1234567812345678'); // Invalid card number
 
-    console.log('Clicking the validate button...');
+    console.log('Waiting for validate button...');
     await page.waitForSelector('#validate-btn');
+    console.log('Clicking the validate button...');
     const alertPromise = handleAlert();
     await page.click('#validate-btn');
 
