@@ -24,7 +24,7 @@ test_script:
   - npx wait-on http://localhost:9000 # Ожидание запуска сервера
   - npm run lint
   - npm run test -- --passWithNoTests
-  - pkill -f "webpack serve" # Завершение процесса сервера после тестов
+  - fuser -k 9000/tcp # Завершение процесса, использующего порт 9000
 
 deploy_script:
   - git config --global credential.helper store
