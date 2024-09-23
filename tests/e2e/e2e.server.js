@@ -1,6 +1,6 @@
 const Webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-const config = require('../../webpack.dev');
+const config = require('../../webpack.dev'); // Замените на правильный путь
 
 const PORT = 9000;
 
