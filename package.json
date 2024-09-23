@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "start-and-test": "cross-env NODE_ENV=test start-server-and-test start http://localhost:9000 test:only",
     "test:only": "jest --detectOpenHandles",
+    "test": "jest",
     "deploy": "gh-pages -d dist"
   },
   "keywords": [],

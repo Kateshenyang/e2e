@@ -6,5 +6,8 @@ module.exports = merge(common, {
   devtool: 'inline-source-map',
   devServer: {
     static: './dist',
+    hot: true, // Включение горячей перезагрузки
+    historyApiFallback: true, // Обработка маршрутов для SPA
+    port: 9000, // Установка порта
   },
 });
