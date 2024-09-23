@@ -7,8 +7,8 @@
     "build": "webpack --config webpack.prod.js",
     "wait-on": "wait-on http://localhost:9000",
     "lint": "eslint .",
-    "test": "jest --detectOpenHandles",
-    "test:all": "concurrently --kill-others \"npm start\" \"npm run wait-on && npm run lint && npm run test\"",
+    "start-and-test": "start-server-and-test start http://localhost:8080 test:only",
+    "test:only": "jest --detectOpenHandles",
     "deploy": "gh-pages -d dist"
   },
   "keywords": [],
@@ -32,6 +32,7 @@
     "mini-css-extract-plugin": "^2.9.1",
     "prettier": "^3.3.3",
     "puppeteer": "^23.3.0",
+    "start-server-and-test": "^2.0.8",
     "webpack": "^5.94.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.1.0"
@@ -39,6 +40,8 @@
   "dependencies": {
     "axios": "^1.7.7",
     "core-js": "^3.38.1",
-    "find-process": "^1.4.7"
+    "find-process": "^1.4.7",
+    "wait-on": "^8.0.1",
+    "start-server-and-test": "^1.13.1"
   }
 }
