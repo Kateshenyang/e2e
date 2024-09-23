@@ -7,7 +7,7 @@
     "build": "webpack --config webpack.prod.js",
     "wait-on": "wait-on http://localhost:9000",
     "lint": "eslint .",
-    "start-and-test": "start-server-and-test start http://localhost:8080 test:only",
+    "start-and-test": "cross-env NODE_ENV=test start-server-and-test start http://localhost:9000 test:only",
     "test:only": "jest --detectOpenHandles",
     "deploy": "gh-pages -d dist"
   },
@@ -42,6 +42,7 @@
     "core-js": "^3.38.1",
     "find-process": "^1.4.7",
     "wait-on": "^8.0.1",
-    "start-server-and-test": "^1.13.1"
+    "start-server-and-test": "^1.13.1",
+    "cross-env": "^7.0.3"
   }
 }
