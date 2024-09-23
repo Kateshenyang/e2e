@@ -1,6 +1,6 @@
-import Webpack from 'webpack';
-import WebpackDevServer from 'webpack-dev-server';
-import config from '../../webpack.dev.js'; // Замените на правильный путь
+const Webpack = require('webpack');
+const WebpackDevServer = require('webpack-dev-server');
+const config = require('../../webpack.dev');
 
 const PORT = 9000;
 
@@ -12,13 +12,13 @@ const runServer = async () => {
   console.log('Starting server on port ' + PORT);
   try {
     await server.start();
-    console.log('Server started on port ' + PORT); // Log that server has started
+    console.log('Server started on port ' + PORT);
     if (process.send) {
       console.log('Sending "ok" message to parent process');
       process.send('ok');
     }
   } catch (error) {
-    console.error('Error starting server:', error); // Log any errors
+    console.error('Error starting server:', error);
     if (process.send) {
       console.log('Sending "error" message to parent process');
       process.send('error');
