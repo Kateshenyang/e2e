@@ -12,6 +12,7 @@ install:
   - npm install
   - npm install wait-on
   - npm install puppeteer@latest
+  - npm install concurrently
   - npx puppeteer install
 
 build: off
@@ -20,11 +21,7 @@ build_script:
   - npm run build
 
 test_script:
-  - npm start & # Запуск сервера в фоновом режиме
-  - npx wait-on http://localhost:9000 # Ожидание запуска сервера
-  - npm run lint
-  - npm run test -- --passWithNoTests
-  - fuser -k 9000/tcp # Завершение процесса, использующего порт 9000
+  - npm run test:all
 
 deploy_script:
   - git config --global credential.helper store
