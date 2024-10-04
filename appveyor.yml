@@ -21,11 +21,8 @@ build_script:
   - npm run build
 
 test_script:
-  - npm start & # Запуск сервера в фоновом режиме
-  - npx wait-on http://localhost:9000 # Ожидание запуска сервера
   - npm run lint
   - npm run test -- --passWithNoTests
-  - fuser -k 9000/tcp # Завершение процесса, использующего порт 9000
 
 deploy_script:
   - git config --global credential.helper store

@@ -2,7 +2,7 @@ import puppeteer from 'puppeteer';
 import { fork } from 'child_process';
 import find from 'find-process';
 
-jest.setTimeout(180000); // Увеличьте время ожидания, если необходимо
+jest.setTimeout(180000);
 
 describe('Credit Card Validator form', () => {
   let browser = null;
@@ -12,7 +12,6 @@ describe('Credit Card Validator form', () => {
   let serverStartTimeout = null;
 
   beforeAll(async () => {
-    // Завершение всех процессов, использующих порт 9000
     try {
       console.log('Searching for any process using port 9000...');
       const list = await find('port', 9000);
@@ -45,13 +44,13 @@ describe('Credit Card Validator form', () => {
       serverStartTimeout = setTimeout(() => {
         console.error('Server start timeout');
         reject(new Error('Server start timeout'));
-      }, 150000); // Увеличьте время ожидания, если необходимо
+      }, 150000);
     });
 
     console.log('Starting browser...');
     browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'], // Эти аргументы могут помочь избежать проблем с правами доступа
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
     page = await browser.newPage();
   });
